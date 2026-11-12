@@ -28,7 +28,7 @@ Projeto educacional de classificação binária de radiografias pediátricas de 
 
 ## Escopo
 
-- Dataset: Kermany et al., Mendeley Data v2, licença indicada CC BY 4.0. O projeto não redistribui as imagens.
+- Dataset: Kermany, Zhang & Goldbaum (2018), [Mendeley Data v2](https://data.mendeley.com/datasets/rscbjbr9sj/2), licença indicada CC BY 4.0. As imagens de Grad-CAM são derivados visuais de exemplos desse dataset; o projeto não redistribui os arquivos originais.
 - População: radiografias pediátricas de origem limitada a um centro; resultados não se generalizam automaticamente.
 - Tarefa: NORMAL/PNEUMONIA. Etiologia bacteriana/viral fora do escopo.
 - Partições: o detector encontrou overlap de tokens de paciente/estudo inferidos entre pastas públicas originais. Por segurança, o pipeline redividiu todos os arquivos por grupos; não tratou o teste publicado como independente.
