@@ -1,0 +1,8 @@
+bootstrap_replicates: 2000
+confidence_level: 0.95
+seed: 42
+calibration:
+  max_iterations: 100
+threshold_selection:
+  source: validation
+  target_sensitivity: 0.95

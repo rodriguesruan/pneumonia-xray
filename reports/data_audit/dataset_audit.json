@@ -1,0 +1,19 @@
+{
+  "image_count": 5856,
+  "valid_image_count": 5856,
+  "invalid_image_count": 0,
+  "counts_by_original_split_and_class": {
+    "test": {
+      "NORMAL": 234,
+      "PNEUMONIA": 390
+    },
+    "train": {
+      "NORMAL": 1349,
+      "PNEUMONIA": 3883
+    }
+  },
+  "exact_duplicate_group_count": 30,
+  "cross_split_exact_duplicate_group_count": 0,
+  "cross_split_exact_duplicates": [],
+  "unrecognized_labels": []
+}

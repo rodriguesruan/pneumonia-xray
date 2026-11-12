@@ -1,0 +1,28 @@
+device: auto
+model:
+  name: mobilenet_v3_small
+  pretrained: true
+  num_classes: 2
+  dropout: 0.2
+  freeze_backbone: true
+  baseline_channels: [32, 64, 128]
+training:
+  batch_size: 32
+  epochs: 20
+  learning_rate: 0.0001
+  weight_decay: 0.0001
+  early_stopping_patience: 5
+  monitor_threshold: 0.5
+  amp: true
+  max_train_batches: null
+  max_val_batches: null
+reproducibility:
+  deterministic: true
+debug:
+  epochs: 2
+  max_train_batches: 5
+artifacts:
+  run_root: runs
+tracking:
+  enabled: false
+  project: pediatric-pneumonia-xray

@@ -1,0 +1,26 @@
+# Data and model artifacts
+/data/raw/**
+/data/processed/**
+/models/**
+/checkpoints/**
+/runs/**
+/reports/evaluation/**
+*.pt
+*.pth
+*.onnx
+*.dvc
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.cache/
+work/
+.coverage
+
+# Secrets
+.env
+kaggle.json

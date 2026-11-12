@@ -1,0 +1,6 @@
+checkpoint: runs/mobilenet_v3_small-20261112T171041Z/best.pt
+data_config: configs/data.yaml
+device: auto
+uncertainty_passes: 20
+ood_validation_quantile: 0.99
+max_upload_mb: 20
