@@ -4,7 +4,7 @@
 
 Checkpoint experimental selecionado e avaliado no holdout interno agrupado. O treino completo foi interrompido manualmente depois de 13 épocas concluídas; a melhor época foi a 11. O limite configurado era 20 épocas, com early stopping de 5. Portanto, a regra de paciência não chegou a encerrar o treino.
 
-- Arquivo: `runs/mobilenet_v3_small-20261112T171041Z/best.pt` (mantido localmente e ignorado pelo Git).
+- Arquivo original local: `runs/mobilenet_v3_small-20261112T171041Z/best.pt` (ignorado pelo Git); cópia do checkpoint para a demo: [Release v0.1.0](https://github.com/rodriguesruan/pneumonia-xray/releases/tag/v0.1.0).
 - SHA-256: `3f8940db6cccbc6b13db06b28e321ab871a6efe5723469b60e2958ef1a35d60f`.
 - Ambiente: Python 3.13.5, PyTorch 2.14.1+cpu, TorchVision 0.29.1+cpu.
 
@@ -66,4 +66,4 @@ No threshold congelado, o holdout teve 623 verdadeiros positivos, 203 verdadeiro
 
 ## Pesos pré-treinados e licença
 
-O código deste repositório está sob BSD-3-Clause. A licença do código TorchVision não esclarece, por si só, todos os direitos sobre os dados de treino ImageNet ou sobre arquivos de pesos. O dataset Kermany indica CC BY 4.0; as imagens não são redistribuídas pelo repositório. Não publicar pesos ou checkpoints derivados antes de confirmar os termos aplicáveis.
+O código deste repositório está sob BSD-3-Clause. A documentação do TorchVision alerta que pesos pré-treinados podem ter termos próprios derivados do dataset de treino; confira os termos aplicáveis antes de reutilizar o checkpoint. O checkpoint foi publicado na Release v0.1.0 a pedido do proprietário do projeto, para a demo educacional. O dataset Kermany indica CC BY 4.0; os arquivos originais de imagem não são distribuídos pelo repositório.
