@@ -1,6 +1,28 @@
 # Pediatric Pneumonia X-ray Classification
 
-Projeto educacional de classificação binária de radiografias pediátricas de tórax (NORMAL vs PNEUMONIA), com PyTorch e transfer learning. O objetivo é praticar avaliação reprodutível e auditoria de atalhos, não produzir diagnóstico clínico.
+**Demo:** publicação ainda não configurada. O checkpoint contém pesos pré-treinados ImageNet; os termos de redistribuição ainda precisam ser confirmados antes de hospedar os pesos publicamente.
+
+## Figuras do projeto
+
+As figuras abaixo foram confirmadas em `reports/figures/`. Grad-CAM é uma visualização exploratória e não comprova que o modelo usa apenas a anatomia relevante.
+
+### Matriz de confusão
+
+![Matriz de confusão do holdout agrupado](reports/figures/02_matriz_confusao.png)
+
+### Curva ROC com intervalo de confiança
+
+![Curva ROC e IC bootstrap](reports/figures/03_curva_roc_ic_bootstrap.png)
+
+### Grad-CAM: exemplos exploratórios
+
+![Grad-CAM em seis exemplos do holdout](reports/figures/04_gradcam_6_exemplos.png)
+
+### Antes e depois do split agrupado
+
+![Comparação dos tamanhos das partições antes e depois da divisão agrupada](reports/figures/06_antes_depois_split_agrupado.png)
+
+Projeto educacional de classificação binária de radiografias pediátricas de tórax (NORMAL vs PNEUMONIA), com PyTorch e transfer learning. O objetivo é praticar avaliação reprodutível; a auditoria sistemática de atalhos visuais está planejada, não foi concluída. O projeto não produz diagnóstico clínico.
 
 > **Aviso:** demonstração educacional; não é dispositivo médico, não deve orientar diagnóstico ou tratamento e não substitui avaliação profissional.
 
