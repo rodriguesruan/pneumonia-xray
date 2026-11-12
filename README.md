@@ -1,6 +1,6 @@
 # Pediatric Pneumonia X-ray Classification
 
-**Demo:** deploy no Streamlit Community Cloud em andamento. [Checkpoint educacional v0.1.0](https://github.com/rodriguesruan/pneumonia-xray/releases/tag/v0.1.0) (SHA-256 verificado). Os pesos pré-treinados incluem parâmetros derivados de ImageNet; confira os termos aplicáveis antes de reutilizar o modelo.
+**Demo pública:** [Abrir o classificador educacional no Streamlit](https://pneumonia-xray-demo-ruan-2026.streamlit.app/) · [Checkpoint educacional v0.1.0](https://github.com/rodriguesruan/pneumonia-xray/releases/tag/v0.1.0) (SHA-256 verificado). Os pesos pré-treinados incluem parâmetros derivados de ImageNet; confira os termos aplicáveis antes de reutilizar o modelo.
 
 ## Figuras do projeto
 
