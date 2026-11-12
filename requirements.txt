@@ -13,6 +13,7 @@ wandb==0.18.7
 dvc==3.58.0
 streamlit==1.67.0
 grad-cam==1.5.4
+opencv-python==5.0.0.93
 pytest==8.3.3
 ruff==0.8.0
 black==24.10.0
