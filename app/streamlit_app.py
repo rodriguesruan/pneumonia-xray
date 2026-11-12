@@ -6,6 +6,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import sys
 import tempfile
 from typing import Any
 from urllib.request import urlretrieve
@@ -16,6 +17,11 @@ import torch
 import torch.nn as nn
 from PIL import Image
 
+# Streamlit Cloud may launch this file with ``app/`` as the working directory.
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
 from src.data.dataset import build_image_transform
 from src.data.loaders import build_dataloader
 from src.evaluation.ood import energy_score, fit_energy_threshold
@@ -24,7 +30,7 @@ from src.models.build import build_model
 from src.utils.config import load_yaml
 from src.utils.reproducibility import resolve_device
 
-APP_CONFIG = load_yaml(Path("configs/app.yaml"))
+APP_CONFIG = load_yaml(PROJECT_ROOT / "configs/app.yaml")
 CHECKPOINT_SHA256 = "3f8940db6cccbc6b13db06b28e321ab871a6efe5723469b60e2958ef1a35d60f"
 PUBLIC_CHECKPOINT_URL = (
     "https://github.com/rodriguesruan/pneumonia-xray/releases/download/"
@@ -44,7 +50,7 @@ def checkpoint_digest(checkpoint_path: Path) -> str:
 @st.cache_resource
 def resolve_checkpoint(local_path: str) -> Path:
     """Use a verified local checkpoint or fetch the pinned public release asset."""
-    candidate = Path(local_path)
+    candidate = PROJECT_ROOT / local_path
     if candidate.is_file() and checkpoint_digest(candidate) == CHECKPOINT_SHA256:
         return candidate
 
@@ -86,7 +92,7 @@ def load_model(checkpoint_path: str, device_name: str):
 def validation_energy_threshold(checkpoint_path: str, device_name: str, quantile: float) -> float:
     """Estimate the high-energy alert boundary from validation images."""
     model, _, device = load_model(checkpoint_path, device_name)
-    data_config = load_yaml(Path(APP_CONFIG["data_config"]))
+    data_config = load_yaml(PROJECT_ROOT / APP_CONFIG["data_config"])
     loader = build_dataloader(data_config, "val", shuffle=False)
     energies = []
     with torch.inference_mode():
@@ -145,7 +151,7 @@ def main() -> None:
 
     model, train_config, device = load_model(str(checkpoint_path), APP_CONFIG["device"])
     model_digest = checkpoint_digest(checkpoint_path)
-    data_config = load_yaml(Path(APP_CONFIG["data_config"]))
+    data_config = load_yaml(PROJECT_ROOT / APP_CONFIG["data_config"])
     transform = build_image_transform(data_config, training=False)
     image_size = data_config["image"]["size"]
     image_resized = image.resize((image_size, image_size), Image.Resampling.BILINEAR)
@@ -155,7 +161,7 @@ def main() -> None:
     predictions = mc_dropout_probabilities(
         model, image_tensor, APP_CONFIG["uncertainty_passes"], device
     )
-    calibration_path = Path("app/artifacts/validation_calibration.json")
+    calibration_path = PROJECT_ROOT / "app/artifacts/validation_calibration.json"
     calibration = load_validation_artifact(calibration_path, model_digest)
     if calibration is not None:
         temperature = float(calibration["temperature"])
@@ -199,7 +205,7 @@ def main() -> None:
             st.info(
                 "Energia dentro da faixa de validação; isso não garante que a entrada seja adequada."
             )
-        threshold_path = Path("app/artifacts/validation_threshold.json")
+        threshold_path = PROJECT_ROOT / "app/artifacts/validation_threshold.json"
         threshold_artifact = load_validation_artifact(threshold_path, model_digest)
         if threshold_artifact is not None and calibration is not None:
             frozen_threshold = threshold_artifact["threshold"]
