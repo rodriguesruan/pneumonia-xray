@@ -1,0 +1,7 @@
+{
+  "threshold": 0.25220467488471643,
+  "target_sensitivity": 0.95,
+  "validation_sensitivity": 0.9512578616352201,
+  "validation_specificity": 0.9393939393939394,
+  "checkpoint_sha256": "3f8940db6cccbc6b13db06b28e321ab871a6efe5723469b60e2958ef1a35d60f"
+}

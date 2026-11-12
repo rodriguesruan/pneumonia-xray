@@ -4,8 +4,11 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from pathlib import Path
+import tempfile
 from typing import Any
+from urllib.request import urlretrieve
 
 import numpy as np
 import streamlit as st
@@ -22,6 +25,11 @@ from src.utils.config import load_yaml
 from src.utils.reproducibility import resolve_device
 
 APP_CONFIG = load_yaml(Path("configs/app.yaml"))
+CHECKPOINT_SHA256 = "3f8940db6cccbc6b13db06b28e321ab871a6efe5723469b60e2958ef1a35d60f"
+PUBLIC_CHECKPOINT_URL = (
+    "https://github.com/rodriguesruan/pneumonia-xray/releases/download/"
+    "v0.1.0/best.pt"
+)
 
 
 def checkpoint_digest(checkpoint_path: Path) -> str:
@@ -31,6 +39,25 @@ def checkpoint_digest(checkpoint_path: Path) -> str:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+@st.cache_resource
+def resolve_checkpoint(local_path: str) -> Path:
+    """Use a verified local checkpoint or fetch the pinned public release asset."""
+    candidate = Path(local_path)
+    if candidate.is_file() and checkpoint_digest(candidate) == CHECKPOINT_SHA256:
+        return candidate
+
+    url = os.environ.get("MODEL_CHECKPOINT_URL", PUBLIC_CHECKPOINT_URL)
+    target = Path(tempfile.gettempdir()) / "pneumonia_xray_best.pt"
+    if target.is_file() and checkpoint_digest(target) == CHECKPOINT_SHA256:
+        return target
+    target.unlink(missing_ok=True)
+    urlretrieve(url, target)
+    if checkpoint_digest(target) != CHECKPOINT_SHA256:
+        target.unlink(missing_ok=True)
+        raise ValueError("O SHA-256 do checkpoint baixado não corresponde ao esperado.")
+    return target
 
 
 def load_validation_artifact(path: Path, checkpoint_sha256: str) -> dict[str, Any] | None:
@@ -98,9 +125,10 @@ def main() -> None:
         "O modelo foi projetado para um benchmark pediátrico de um centro. Grad-CAM e alertas "
         "de incerteza/OOD são exploratórios e não explicam nem validam um diagnóstico."
     )
-    checkpoint_path = Path(APP_CONFIG["checkpoint"])
-    if not checkpoint_path.is_file():
-        st.warning(f"Checkpoint local não encontrado: {checkpoint_path}")
+    try:
+        checkpoint_path = resolve_checkpoint(APP_CONFIG["checkpoint"])
+    except (OSError, ValueError) as error:
+        st.error(f"Não foi possível carregar o checkpoint verificado: {error}")
         st.stop()
     upload = st.file_uploader("Envie uma imagem JPG ou PNG", type=["jpg", "jpeg", "png"])
     if upload is None:
@@ -127,11 +155,7 @@ def main() -> None:
     predictions = mc_dropout_probabilities(
         model, image_tensor, APP_CONFIG["uncertainty_passes"], device
     )
-    calibration_path = (
-        Path("reports/evaluation")
-        / checkpoint_path.parent.name
-        / "validation_calibration.json"
-    )
+    calibration_path = Path("app/artifacts/validation_calibration.json")
     calibration = load_validation_artifact(calibration_path, model_digest)
     if calibration is not None:
         temperature = float(calibration["temperature"])
@@ -153,9 +177,12 @@ def main() -> None:
             str(checkpoint_path), APP_CONFIG["device"], APP_CONFIG["ood_validation_quantile"]
         )
         possible_ood = current_energy > ood_threshold
-    except (FileNotFoundError, ValueError, RuntimeError) as error:
+    except (FileNotFoundError, ValueError, RuntimeError):
         possible_ood = None
-        st.warning(f"Alerta OOD indisponível: {error}")
+        st.info(
+            "Alerta OOD não está habilitado na demo pública porque o dataset de validação "
+            "não é distribuído com o repositório."
+        )
 
     first_column, second_column = st.columns(2)
     with first_column:
@@ -172,11 +199,7 @@ def main() -> None:
             st.info(
                 "Energia dentro da faixa de validação; isso não garante que a entrada seja adequada."
             )
-        threshold_path = (
-            Path("reports/evaluation")
-            / checkpoint_path.parent.name
-            / "validation_threshold.json"
-        )
+        threshold_path = Path("app/artifacts/validation_threshold.json")
         threshold_artifact = load_validation_artifact(threshold_path, model_digest)
         if threshold_artifact is not None and calibration is not None:
             frozen_threshold = threshold_artifact["threshold"]
