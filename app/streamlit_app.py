@@ -33,8 +33,7 @@ from src.utils.reproducibility import resolve_device
 APP_CONFIG = load_yaml(PROJECT_ROOT / "configs/app.yaml")
 CHECKPOINT_SHA256 = "3f8940db6cccbc6b13db06b28e321ab871a6efe5723469b60e2958ef1a35d60f"
 PUBLIC_CHECKPOINT_URL = (
-    "https://github.com/rodriguesruan/pneumonia-xray/releases/download/"
-    "v0.1.0/best.pt"
+    "https://github.com/rodriguesruan/pneumonia-xray/releases/download/" "v0.1.0/best.pt"
 )
 
 
@@ -227,11 +226,16 @@ def main() -> None:
         original_rgb,
         positive_index,
     )
-    st.image(
-        cam_image,
-        caption="Grad-CAM exploratório para a classe pneumonia",
-        use_container_width=True,
-    )
+    if cam_image is None:
+        st.warning(
+            "Grad-CAM indisponível neste ambiente; os demais resultados continuam disponíveis."
+        )
+    else:
+        st.image(
+            cam_image,
+            caption="Grad-CAM exploratório para a classe pneumonia",
+            use_container_width=True,
+        )
 
 
 if __name__ == "__main__":
