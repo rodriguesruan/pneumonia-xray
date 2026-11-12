@@ -31,11 +31,15 @@ def create_gradcam(
     image_tensor: torch.Tensor,
     original_rgb: np.ndarray,
     positive_class_index: int,
-) -> np.ndarray:
-    """Create an RGB Grad-CAM overlay for the positive class."""
-    from pytorch_grad_cam import GradCAM
-    from pytorch_grad_cam.utils.image import show_cam_on_image
-    from pytorch_grad_cam.utils.model_targets import ClassifierOutputTarget
+) -> np.ndarray | None:
+    """Create an RGB Grad-CAM overlay, or return None if OpenCV is unavailable."""
+    try:
+        from pytorch_grad_cam import GradCAM
+        from pytorch_grad_cam.utils.image import show_cam_on_image
+        from pytorch_grad_cam.utils.model_targets import ClassifierOutputTarget
+    except (ImportError, OSError):
+        # OpenCV may be installed but fail to load when a system library is absent.
+        return None
 
     target_layers = [target_layer_for_model(model, model_name)]
     with GradCAM(model=model, target_layers=target_layers) as cam:
