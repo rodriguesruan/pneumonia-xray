@@ -219,13 +219,16 @@ def main() -> None:
                 "exibindo somente o score."
             )
 
-    cam_image = create_gradcam(
-        model,
-        train_config["model"]["name"],
-        image_tensor.to(device),
-        original_rgb,
-        positive_index,
-    )
+    try:
+        cam_image = create_gradcam(
+            model,
+            train_config["model"]["name"],
+            image_tensor.to(device),
+            original_rgb,
+            positive_index,
+        )
+    except (AttributeError, ImportError, OSError, RuntimeError):
+        cam_image = None
     if cam_image is None:
         st.warning(
             "Grad-CAM indisponível neste ambiente; os demais resultados continuam disponíveis."
