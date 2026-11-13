@@ -42,9 +42,12 @@ def create_gradcam(
         return None
 
     target_layers = [target_layer_for_model(model, model_name)]
+    # The production classifier freezes its feature backbone. Requiring gradients
+    # on the input keeps gradients flowing through that frozen backbone to the CAM layer.
+    gradcam_input = image_tensor.unsqueeze(0).detach().requires_grad_(True)
     with GradCAM(model=model, target_layers=target_layers) as cam:
         grayscale_cam = cam(
-            input_tensor=image_tensor.unsqueeze(0),
+            input_tensor=gradcam_input,
             targets=[ClassifierOutputTarget(positive_class_index)],
         )[0]
     return show_cam_on_image(original_rgb, grayscale_cam, use_rgb=True)
